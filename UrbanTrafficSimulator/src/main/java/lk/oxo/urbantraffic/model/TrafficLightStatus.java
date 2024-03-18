@@ -1,5 +1,5 @@
 package lk.oxo.urbantraffic.model;
 
-public enum TrafficLightStats {
+public enum TrafficLightStatus {
     RED, YELLOW, GREEN
 }

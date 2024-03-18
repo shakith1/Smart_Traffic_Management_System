@@ -1,5 +1,5 @@
 package lk.oxo.urbantraffic.model;
 
-public enum Zone {
+public enum TrafficZone {
     RESIDENTIAL,COMMERCIAL,INDUSTRIAL
 }
