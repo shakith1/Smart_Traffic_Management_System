@@ -17,7 +17,7 @@ public class Main {
         TrafficData trafficData = TrafficDataGenerator.generateTrafficData();
         System.out.println(trafficData);
 
-        JMSClient jmsClient = new JMSClient();
-        jmsClient.sendTrafficData(trafficData);
+//        JMSClient jmsClient = new JMSClient();
+//        jmsClient.sendTrafficData(trafficData);
     }
 }

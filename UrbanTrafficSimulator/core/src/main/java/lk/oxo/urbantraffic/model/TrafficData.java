@@ -28,7 +28,7 @@ public class TrafficData implements Serializable {
         this.trafficZone = trafficZone;
     }
 
-    public double getVehicleSpeed() {
+    public long getVehicleSpeed() {
         return vehicleSpeed;
     }
 
