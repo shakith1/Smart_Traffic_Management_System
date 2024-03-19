@@ -1,5 +1,6 @@
 package lk.oxo.urbantraffic;
 
+import com.hazelcast.internal.util.ThreadAffinity;
 import lk.oxo.urbantraffic.generator.TrafficDataGenerator;
 import lk.oxo.urbantraffic.jms.JMSClient;
 import lk.oxo.urbantraffic.model.TrafficData;
@@ -14,8 +15,18 @@ public class Main {
 //        System.out.println(6.8+random.nextDouble() * (6.95 - 6.8));
 //        TrafficDataGenerator generator = new TrafficDataGenerator();
 //        TrafficData trafficData = generator.generateTrafficData();
-        TrafficData trafficData = TrafficDataGenerator.generateTrafficData();
-        System.out.println(trafficData);
+
+        JMSClient jmsClient = JMSClient.getInstance();
+        for (int i = 0; i < 20; i++) {
+            TrafficData trafficData = TrafficDataGenerator.generateTrafficData();
+            System.out.println(trafficData);
+            jmsClient.addTrafficData(trafficData);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
 //        JMSClient jmsClient = new JMSClient();
 //        jmsClient.sendTrafficData(trafficData);
