@@ -1,6 +1,8 @@
 package lk.oxo.urbantraffic.model;
 
-public class TrafficData {
+import java.io.Serializable;
+
+public class TrafficData implements Serializable {
     private long vehicleSpeed;
     private TrafficLightStatus lightStatus;
     private double latitude;
