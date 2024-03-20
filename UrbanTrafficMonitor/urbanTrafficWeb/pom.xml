@@ -25,6 +25,14 @@
             <version>10.0.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>lk.oxo</groupId>
+            <artifactId>urbanTrafficEJB</artifactId>
+            <type>ejb-client</type>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

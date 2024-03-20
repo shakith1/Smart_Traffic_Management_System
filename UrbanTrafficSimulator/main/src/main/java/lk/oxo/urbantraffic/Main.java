@@ -1,11 +1,8 @@
 package lk.oxo.urbantraffic;
 
-import com.hazelcast.internal.util.ThreadAffinity;
 import lk.oxo.urbantraffic.generator.TrafficDataGenerator;
 import lk.oxo.urbantraffic.jms.JMSClient;
 import lk.oxo.urbantraffic.model.TrafficData;
-import lk.oxo.urbantraffic.model.TrafficLightStatus;
-
 import java.util.Random;
 
 public class Main {
