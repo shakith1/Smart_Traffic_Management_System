@@ -1,6 +1,7 @@
 package lk.oxo.urbantraffic.model;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class TrafficData implements Serializable {
     private long vehicleSpeed;
@@ -8,6 +9,7 @@ public class TrafficData implements Serializable {
     private double latitude;
     private double longitude;
     private TrafficZone trafficZone;
+    private LocalDateTime timeStamp;
 
     @Override
     public String toString() {
@@ -66,5 +68,13 @@ public class TrafficData implements Serializable {
 
     public void setTrafficZone(TrafficZone trafficZone) {
         this.trafficZone = trafficZone;
+    }
+
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }
