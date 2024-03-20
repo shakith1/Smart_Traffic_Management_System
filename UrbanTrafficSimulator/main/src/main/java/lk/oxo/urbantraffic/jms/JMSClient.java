@@ -1,6 +1,7 @@
 package lk.oxo.urbantraffic.jms;
 
 import jakarta.jms.*;
+import lk.oxo.urbantraffic.generator.TrafficDataGenerator;
 import lk.oxo.urbantraffic.model.TrafficData;
 import lk.oxo.urbantraffic.util.JMSUtil;
 
@@ -14,10 +15,10 @@ public class JMSClient {
     private static JMSClient instance;
     private final QueueConnectionFactory factory;
     private final Queue queue;
-    private final List<TrafficData> dataList;
+//    private final List<TrafficData> dataList;
 
     private JMSClient() {
-        dataList = new ArrayList<>();
+//        dataList = new ArrayList<>();
         try {
             InitialContext context = new InitialContext();
             factory = (QueueConnectionFactory) context.lookup(JMSUtil.JMS_CONNECTION_FACTORY);
@@ -34,13 +35,14 @@ public class JMSClient {
         return instance;
     }
 
-    public void addTrafficData(TrafficData trafficData){
-        dataList.add(trafficData);
-        if(dataList.size()>=JMSUtil.LIST_MAX_SIZE)
-            sendData();
-    }
+//    public void addTrafficData(TrafficData trafficData){
+//        dataList.add(trafficData);
+//        if(dataList.size()>=JMSUtil.LIST_MAX_SIZE)
+//            sendData();
+//
+//    }
 
-    private void sendData() {
+    public void sendData(List<TrafficData> dataList) {
         if (!dataList.isEmpty()) {
             try (QueueConnection connection = factory.createQueueConnection();
                  QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE)) {

@@ -13,18 +13,20 @@ public class Main {
 //        TrafficDataGenerator generator = new TrafficDataGenerator();
 //        TrafficData trafficData = generator.generateTrafficData();
 
-        JMSClient jmsClient = JMSClient.getInstance();
-        for (int i = 0; i < 20; i++) {
-            TrafficData trafficData = TrafficDataGenerator.generateTrafficData();
-            System.out.println(trafficData);
-            jmsClient.addTrafficData(trafficData);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
+//        JMSClient jmsClient = JMSClient.getInstance();
+//        for (int i = 0; i < 20; i++) {
+//            TrafficData trafficData = TrafficDataGenerator.generateTrafficData();
+//            System.out.println(trafficData);
+//            jmsClient.addTrafficData(trafficData);
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
 
+        TrafficDataGenerator generator = new TrafficDataGenerator();
+        generator.generateData(20);
 //        JMSClient jmsClient = new JMSClient();
 //        jmsClient.sendTrafficData(trafficData);
     }

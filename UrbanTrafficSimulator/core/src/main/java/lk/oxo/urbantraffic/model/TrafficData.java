@@ -19,6 +19,7 @@ public class TrafficData implements Serializable {
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", trafficZone=" + trafficZone +
+                ", timeStamp=" + timeStamp +
                 '}';
     }
 
