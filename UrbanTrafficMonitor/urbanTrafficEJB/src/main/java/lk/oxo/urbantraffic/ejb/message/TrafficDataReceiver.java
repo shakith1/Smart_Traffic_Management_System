@@ -7,8 +7,7 @@ import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageListener;
 import jakarta.jms.ObjectMessage;
-import lk.oxo.urbantraffic.ejb.impl.TrafficAnalyseBean;
-import lk.oxo.urbantraffic.ejb.remote.TrafficAnalyse;
+import lk.oxo.urbantraffic.ejb.remote.TrafficDataStorage;
 import lk.oxo.urbantraffic.model.TrafficData;
 
 import java.util.List;
@@ -20,7 +19,7 @@ import java.util.List;
 )
 public class TrafficDataReceiver implements MessageListener {
     @EJB
-    TrafficAnalyse analyse;
+    TrafficDataStorage dataStorage;
 
     @Override
     public void onMessage(Message message) {
@@ -31,7 +30,7 @@ public class TrafficDataReceiver implements MessageListener {
 
             List<TrafficData> trafficData = (List<TrafficData>) objectMessage.getObject();
             System.out.println(trafficData);
-            analyse.storeTrafficData(trafficData);
+            dataStorage.storeTrafficData(trafficData);
         } catch (JMSException e) {
             throw new RuntimeException(e);
         }
