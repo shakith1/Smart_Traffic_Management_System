@@ -11,4 +11,5 @@ public interface TrafficDataAnalysis {
     double calculateAverageSpeed();
     Map<LocalDate, List<TrafficData>> getTrafficDataByDate();
     Map<LocalDateTime, List<TrafficData>> filterTrafficDataByRushHour();
+    Map<LocalDateTime, Double>  calculateAverageSpeedRushHour();
 }

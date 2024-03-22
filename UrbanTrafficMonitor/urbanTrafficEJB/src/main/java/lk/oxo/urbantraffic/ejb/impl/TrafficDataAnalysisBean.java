@@ -72,13 +72,34 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
                     eveningList.add(trafficData);
             }
 
-            rushHourTrafficData.put(date.atTime(7,0), morningList);
-            rushHourTrafficData.put(date.atTime(16,0), eveningList);
+            rushHourTrafficData.put(date.atTime(7, 0), morningList);
+            rushHourTrafficData.put(date.atTime(16, 0), eveningList);
         }
         return rushHourTrafficData;
     }
 
     private boolean checkRushHourRange(LocalTime time, LocalTime start, LocalTime end) {
         return !time.isBefore(start) && !time.isAfter(end);
+    }
+
+    public Map<LocalDateTime, Double>  calculateAverageSpeedRushHour() {
+        Map<LocalDateTime, List<TrafficData>> rushHourData = filterTrafficDataByRushHour();
+        Map<LocalDateTime, Double> averageSpeeds = new HashMap<>();
+
+        for (LocalDateTime dateTime : rushHourData.keySet()) {
+            List<TrafficData> trafficDataList = rushHourData.get(dateTime);
+
+            double totalSpeed = 0, averageSpeed = 0;
+
+            for (TrafficData trafficData : trafficDataList) {
+                totalSpeed += trafficData.getVehicleSpeed();
+            }
+
+            if (!trafficDataList.isEmpty()) {
+                averageSpeed = totalSpeed / trafficDataList.size();
+            }
+            averageSpeeds.put(dateTime, averageSpeed);
+        }
+        return averageSpeeds;
     }
 }
