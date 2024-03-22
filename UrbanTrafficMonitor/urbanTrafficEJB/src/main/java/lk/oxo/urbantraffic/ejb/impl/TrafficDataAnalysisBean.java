@@ -4,6 +4,8 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import lk.oxo.urbantraffic.ejb.remote.TrafficDataAnalysis;
 import lk.oxo.urbantraffic.ejb.remote.TrafficDataStorage;
+import lk.oxo.urbantraffic.ejb.util.TrafficLevel;
+import lk.oxo.urbantraffic.ejb.util.TrafficUtil;
 import lk.oxo.urbantraffic.model.TrafficData;
 
 import java.time.LocalDate;
@@ -16,10 +18,6 @@ import java.util.Map;
 
 @Stateless
 public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
-    private static final LocalTime MORNING_RUSH_HOUR_START = LocalTime.of(7, 0);
-    private static final LocalTime MORNING_RUSH_HOUR_END = LocalTime.of(9, 59);
-    private static final LocalTime EVENING_RUSH_HOUR_START = LocalTime.of(16, 0);
-    private static final LocalTime EVENING_RUSH_HOUR_END = LocalTime.of(18, 59);
     @EJB
     TrafficDataStorage dataStorage;
 
@@ -66,9 +64,9 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
 
             for (TrafficData trafficData : dataList) {
                 LocalTime time = trafficData.getTimeStamp().toLocalTime();
-                if (checkRushHourRange(time, MORNING_RUSH_HOUR_START, MORNING_RUSH_HOUR_END))
+                if (checkRushHourRange(time, TrafficUtil.MORNING_RUSH_HOUR_START, TrafficUtil.MORNING_RUSH_HOUR_END))
                     morningList.add(trafficData);
-                else if (checkRushHourRange(time, EVENING_RUSH_HOUR_START, EVENING_RUSH_HOUR_END))
+                else if (checkRushHourRange(time, TrafficUtil.EVENING_RUSH_HOUR_START, TrafficUtil.EVENING_RUSH_HOUR_END))
                     eveningList.add(trafficData);
             }
 
@@ -101,5 +99,22 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
             averageSpeeds.put(dateTime, averageSpeed);
         }
         return averageSpeeds;
+    }
+
+    public HashMap<LocalDateTime, TrafficLevel> analyzeTrafficLevelOnRushHour(){
+        Map<LocalDateTime, Double> rushHourData = calculateAverageSpeedRushHour();
+
+        HashMap<LocalDateTime, TrafficLevel> analyzedData = new HashMap<>();
+
+        for (LocalDateTime dateTime: rushHourData.keySet()){
+            Double averageSpeed = rushHourData.get(dateTime);
+            if(averageSpeed >TrafficUtil.LOW_TRAFFIC)
+                analyzedData.put(dateTime, TrafficLevel.LOW_TRAFFIC);
+            else if(averageSpeed > TrafficUtil.HIGH_TRAFFIC)
+                analyzedData.put(dateTime, TrafficLevel.MODERATE_TRAFFIC);
+            else
+                analyzedData.put(dateTime, TrafficLevel.HIGH_TRAFFIC);
+        }
+        return analyzedData;
     }
 }
