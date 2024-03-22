@@ -1,6 +1,8 @@
 package lk.oxo.urbantraffic.ejb.impl;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.ejb.Lock;
+import jakarta.ejb.LockType;
 import jakarta.ejb.Singleton;
 import jakarta.ejb.Startup;
 import lk.oxo.urbantraffic.ejb.remote.TrafficDataStorage;
@@ -30,6 +32,7 @@ public class TrafficDataStorageBean implements TrafficDataStorage {
     }
 
     @Override
+    @Lock(LockType.READ)
     public List<TrafficData> getTrafficDataList() {
         return trafficDataList;
     }
