@@ -7,6 +7,7 @@ import lk.oxo.urbantraffic.ejb.remote.TrafficDataStorage;
 import lk.oxo.urbantraffic.ejb.util.TrafficLevel;
 import lk.oxo.urbantraffic.ejb.util.TrafficUtil;
 import lk.oxo.urbantraffic.model.TrafficData;
+import lk.oxo.urbantraffic.model.TrafficZone;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,6 +50,22 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
             dataList.add(trafficData);
         }
         return dataByDate;
+    }
+
+    @Override
+    public Map<LocalDate, Map<TrafficZone, List<TrafficData>>> getTrafficDataByDateAndZone(){
+        Map<LocalDate, Map<TrafficZone, List<TrafficData>>> dataByDateAndZone = new HashMap<>();
+
+        for (TrafficData trafficData: dataStorage.getTrafficDataList()){
+            LocalDate date = trafficData.getTimeStamp().toLocalDate();
+            TrafficZone trafficZone = trafficData.getTrafficZone();
+
+            Map<TrafficZone, List<TrafficData>> trafficZoneData = dataByDateAndZone.computeIfAbsent(date, k -> new HashMap<>());
+            List<TrafficData> dataList = trafficZoneData.computeIfAbsent(trafficZone, k -> new ArrayList<>());
+
+            dataList.add(trafficData);
+        }
+        return dataByDateAndZone;
     }
 
     @Override
