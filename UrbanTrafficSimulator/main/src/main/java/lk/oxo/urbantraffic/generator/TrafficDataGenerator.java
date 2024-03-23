@@ -74,8 +74,13 @@ public class TrafficDataGenerator {
     }
 
     private TrafficLightStatus generateTrafficLightStatus() {
-        int index = random.nextInt(TrafficLightStatus.values().length);
-        return TrafficLightStatus.values()[index];
+        double randomNumber = random.nextDouble();
+        if(randomNumber < TrafficUtils.RED_PROBABILITY)
+            return TrafficLightStatus.RED;
+        else if(randomNumber < TrafficUtils.RED_PROBABILITY + TrafficUtils.GREEN_PROBABILITY)
+            return TrafficLightStatus.GREEN;
+        else
+            return TrafficLightStatus.YELLOW;
     }
 
     private double generateLatitude() {

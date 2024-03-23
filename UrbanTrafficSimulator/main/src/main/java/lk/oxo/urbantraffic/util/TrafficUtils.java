@@ -13,4 +13,6 @@ public class TrafficUtils {
     public static final LocalDateTime START_TIME = LocalDateTime.of(2024,1,1,7,0);
     public static final LocalDateTime END_TIME = LocalDateTime.of(2024,1,1,18,59);
     public static final long LIST_MAX_SIZE = 2;
+    public static final double RED_PROBABILITY = 0.2;
+    public static final double GREEN_PROBABILITY = 0.6;
 }
