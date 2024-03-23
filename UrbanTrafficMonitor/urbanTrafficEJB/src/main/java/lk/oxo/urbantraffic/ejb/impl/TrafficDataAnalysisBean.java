@@ -4,6 +4,7 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import lk.oxo.urbantraffic.ejb.remote.TrafficDataAnalysis;
 import lk.oxo.urbantraffic.ejb.remote.TrafficDataStorage;
+import lk.oxo.urbantraffic.ejb.util.Efficiency;
 import lk.oxo.urbantraffic.ejb.util.TrafficLevel;
 import lk.oxo.urbantraffic.ejb.util.TrafficUtil;
 import lk.oxo.urbantraffic.model.TrafficData;
@@ -53,10 +54,10 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
     }
 
     @Override
-    public Map<LocalDate, Map<TrafficZone, List<TrafficData>>> getTrafficDataByDateAndZone(){
+    public Map<LocalDate, Map<TrafficZone, List<TrafficData>>> getTrafficDataByDateAndZone() {
         Map<LocalDate, Map<TrafficZone, List<TrafficData>>> dataByDateAndZone = new HashMap<>();
 
-        for (TrafficData trafficData: dataStorage.getTrafficDataList()){
+        for (TrafficData trafficData : dataStorage.getTrafficDataList()) {
             LocalDate date = trafficData.getTimeStamp().toLocalDate();
             TrafficZone trafficZone = trafficData.getTrafficZone();
 
@@ -97,7 +98,7 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
         return !time.isBefore(start) && !time.isAfter(end);
     }
 
-    public Map<LocalDateTime, Double>  calculateAverageSpeedRushHour() {
+    public Map<LocalDateTime, Double> calculateAverageSpeedRushHour() {
         Map<LocalDateTime, List<TrafficData>> rushHourData = filterTrafficDataByRushHour();
         Map<LocalDateTime, Double> averageSpeeds = new HashMap<>();
 
@@ -118,20 +119,62 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
         return averageSpeeds;
     }
 
-    public HashMap<LocalDateTime, TrafficLevel> analyzeTrafficLevelOnRushHour(){
+    public Map<LocalDateTime, TrafficLevel> analyzeTrafficLevelOnRushHour() {
         Map<LocalDateTime, Double> rushHourData = calculateAverageSpeedRushHour();
 
         HashMap<LocalDateTime, TrafficLevel> analyzedData = new HashMap<>();
 
-        for (LocalDateTime dateTime: rushHourData.keySet()){
+        for (LocalDateTime dateTime : rushHourData.keySet()) {
             Double averageSpeed = rushHourData.get(dateTime);
-            if(averageSpeed >TrafficUtil.LOW_TRAFFIC)
+            if (averageSpeed > TrafficUtil.LOW_TRAFFIC)
                 analyzedData.put(dateTime, TrafficLevel.LOW_TRAFFIC);
-            else if(averageSpeed > TrafficUtil.HIGH_TRAFFIC)
+            else if (averageSpeed > TrafficUtil.HIGH_TRAFFIC)
                 analyzedData.put(dateTime, TrafficLevel.MODERATE_TRAFFIC);
             else
                 analyzedData.put(dateTime, TrafficLevel.HIGH_TRAFFIC);
         }
         return analyzedData;
+    }
+
+    public Map<LocalDate, Map<TrafficZone, Efficiency>> calculateUrbanMobilityEfficiency() {
+        Map<LocalDate, Map<TrafficZone, List<TrafficData>>> trafficDataByDateAndZone = getTrafficDataByDateAndZone();
+
+        Map<LocalDate, Map<TrafficZone, Efficiency>> efficiencyMap = new HashMap<>();
+
+        for (LocalDate date : trafficDataByDateAndZone.keySet()) {
+            Map<TrafficZone, List<TrafficData>> zoneListMap = trafficDataByDateAndZone.get(date);
+
+            HashMap<TrafficZone, Efficiency> dayEfficiency = new HashMap<>();
+
+            for (TrafficZone trafficZone : zoneListMap.keySet()) {
+                List<TrafficData> trafficDataList = zoneListMap.get(trafficZone);
+
+                double totalSpeed = 0, averageSpeed = 0;
+                int vehicleCount = 0;
+
+                for (TrafficData trafficData : trafficDataList) {
+                    totalSpeed += trafficData.getVehicleSpeed();
+                    vehicleCount++;
+                }
+
+                if (vehicleCount > 0)
+                    averageSpeed = totalSpeed / vehicleCount;
+
+                Efficiency efficiencyCategory = getEfficiencyCategory(averageSpeed);
+                dayEfficiency.put(trafficZone,efficiencyCategory);
+            }
+            efficiencyMap.put(date,dayEfficiency);
+        }
+
+        return efficiencyMap;
+    }
+
+    private Efficiency getEfficiencyCategory(double averageSpeed) {
+        if (averageSpeed >= TrafficUtil.HIGH_THRESHOLD)
+            return Efficiency.HIGH_EFFICIENCY;
+        else if (averageSpeed >= TrafficUtil.MEDIUM_THRESHOLD)
+            return Efficiency.MEDIUM_EFFICIENCY;
+        else
+            return Efficiency.LOW_EFFICIENCY;
     }
 }
