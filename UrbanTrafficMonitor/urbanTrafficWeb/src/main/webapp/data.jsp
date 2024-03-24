@@ -30,7 +30,7 @@
     <div class="row text-center mb-4">
         <div class="col">
             <a class="btn btn-primary mr-2" href="traffic_pattern">Traffic Patterns</a>
-            <button class="btn btn-primary">Urban Efficiency</button>
+            <a class="btn btn-primary" href="efficiency">Urban Efficiency</a>
         </div>
     </div>
 

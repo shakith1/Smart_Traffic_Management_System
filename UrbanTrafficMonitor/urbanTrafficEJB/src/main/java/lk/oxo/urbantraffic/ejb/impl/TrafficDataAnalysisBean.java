@@ -122,6 +122,7 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
         return averageSpeeds;
     }
 
+    @Override
     public Map<LocalDate, Map<RushHour, AnalyzedLevel>> analyzeTrafficLevelOnRushHour() {
         Map<LocalDate, Map<RushHour, Double>> rushHourSpeeds = calculateAverageSpeedRushHour();
 
@@ -151,8 +152,6 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
 
         return result;
     }
-
-
 
     public Map<LocalDate, Map<TrafficZone, Efficiency>> calculateUrbanMobilityEfficiency() {
         Map<LocalDate, Map<TrafficZone, List<TrafficData>>> trafficDataByDateAndZone = getTrafficDataByDateAndZone();

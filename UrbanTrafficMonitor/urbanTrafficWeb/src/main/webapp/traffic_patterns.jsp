@@ -1,5 +1,4 @@
 <%@ page import="java.util.Map" %>
-<%@ page import="lk.oxo.urbantraffic.ejb.util.TrafficLevel" %>
 <%@ page import="lk.oxo.urbantraffic.ejb.util.AnalyzedLevel" %>
 <%@ page import="java.time.LocalDate" %>
 <%@ page import="lk.oxo.urbantraffic.ejb.util.RushHour" %>
@@ -22,7 +21,7 @@
     <div class="row text-center mb-4">
         <div class="col">
             <a class="btn btn-primary mr-2" href="index.jsp">Home Page</a>
-            <button class="btn btn-primary">Urban Efficiency</button>
+            <a class="btn btn-primary" href="efficiency">Urban Efficiency</a>
         </div>
     </div>
     <div class="row">
