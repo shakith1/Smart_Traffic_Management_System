@@ -40,6 +40,13 @@
                 <version>3.3.0</version>
                 <configuration>
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <modules>
+                        <webModule>
+                            <groupId>lk.oxo</groupId>
+                            <artifactId>urbanTrafficWeb</artifactId>
+                            <contextRoot>/traffic-monitor</contextRoot>
+                        </webModule>
+                    </modules>
                 </configuration>
             </plugin>
         </plugins>

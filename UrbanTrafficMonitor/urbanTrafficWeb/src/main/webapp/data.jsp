@@ -22,15 +22,15 @@
         if (trafficDataList.isEmpty()) {
     %>
     <div class="row text-center mt-5">
-        <h3>Please Run Client Application For Data Manipulation</h3>
+        <h3>Please Run Simulator For Data Manipulation</h3>
     </div>
     <%
     } else {
     %>
     <div class="row text-center mb-4">
         <div class="col">
-            <a class="btn btn-primary mr-2" href="traffic_pattern">Traffic Patterns</a>
-            <a class="btn btn-primary" href="efficiency">Urban Efficiency</a>
+            <a class="btn btn-primary mr-2" href="/traffic-monitor/traffic_pattern">Traffic Patterns</a>
+            <a class="btn btn-primary" href="/traffic-monitor/efficiency">Urban Efficiency</a>
         </div>
     </div>
 
