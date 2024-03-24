@@ -4,14 +4,11 @@ import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import lk.oxo.urbantraffic.ejb.remote.TrafficDataAnalysis;
 import lk.oxo.urbantraffic.ejb.remote.TrafficDataStorage;
-import lk.oxo.urbantraffic.ejb.util.Efficiency;
-import lk.oxo.urbantraffic.ejb.util.TrafficLevel;
-import lk.oxo.urbantraffic.ejb.util.TrafficUtil;
+import lk.oxo.urbantraffic.ejb.util.*;
 import lk.oxo.urbantraffic.model.TrafficData;
 import lk.oxo.urbantraffic.model.TrafficZone;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -70,9 +67,9 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
     }
 
     @Override
-    public Map<LocalDateTime, List<TrafficData>> filterTrafficDataByRushHour() {
+    public Map<LocalDate, Map<RushHour, List<TrafficData>>> filterTrafficDataByRushHour() {
         Map<LocalDate, List<TrafficData>> trafficDataByDate = getTrafficDataByDate();
-        Map<LocalDateTime, List<TrafficData>> rushHourTrafficData = new HashMap<>();
+        Map<LocalDate, Map<RushHour, List<TrafficData>>> rushHourTrafficData = new HashMap<>();
 
         for (LocalDate date : trafficDataByDate.keySet()) {
             List<TrafficData> dataList = trafficDataByDate.get(date);
@@ -88,8 +85,11 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
                     eveningList.add(trafficData);
             }
 
-            rushHourTrafficData.put(date.atTime(7, 0), morningList);
-            rushHourTrafficData.put(date.atTime(16, 0), eveningList);
+            Map<RushHour, List<TrafficData>> rushHourMap = new HashMap<>();
+            rushHourMap.put(RushHour.MORNING, morningList);
+            rushHourMap.put(RushHour.EVENING, eveningList);
+
+            rushHourTrafficData.put(date, rushHourMap);
         }
         return rushHourTrafficData;
     }
@@ -98,43 +98,63 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
         return !time.isBefore(start) && !time.isAfter(end);
     }
 
-    public Map<LocalDateTime, Double> calculateAverageSpeedRushHour() {
-        Map<LocalDateTime, List<TrafficData>> rushHourData = filterTrafficDataByRushHour();
-        Map<LocalDateTime, Double> averageSpeeds = new HashMap<>();
+    public Map<LocalDate, Map<RushHour, Double>> calculateAverageSpeedRushHour() {
+        Map<LocalDate, Map<RushHour, List<TrafficData>>> rushHourData = filterTrafficDataByRushHour();
+        Map<LocalDate, Map<RushHour, Double>> averageSpeeds = new HashMap<>();
 
-        for (LocalDateTime dateTime : rushHourData.keySet()) {
-            List<TrafficData> trafficDataList = rushHourData.get(dateTime);
+        for (LocalDate date : rushHourData.keySet()) {
+            Map<RushHour, List<TrafficData>> rushHourMap = rushHourData.get(date);
+            Map<RushHour, Double> averageSpeedMap = new HashMap<>();
 
-            double totalSpeed = 0, averageSpeed = 0;
+            for (RushHour rushHour : rushHourMap.keySet()) {
+                List<TrafficData> trafficDataList = rushHourMap.get(rushHour);
+                double totalSpeed = 0, averageSpeed = 0;
 
-            for (TrafficData trafficData : trafficDataList) {
-                totalSpeed += trafficData.getVehicleSpeed();
+                for (TrafficData trafficData : trafficDataList) {
+                    totalSpeed += trafficData.getVehicleSpeed();
+                }
+
+                if (!trafficDataList.isEmpty()) {
+                    averageSpeed = totalSpeed / trafficDataList.size();
+                }
+                averageSpeedMap.put(rushHour, averageSpeed);
             }
-
-            if (!trafficDataList.isEmpty()) {
-                averageSpeed = totalSpeed / trafficDataList.size();
-            }
-            averageSpeeds.put(dateTime, averageSpeed);
+            averageSpeeds.put(date, averageSpeedMap);
         }
         return averageSpeeds;
     }
 
-    public Map<LocalDateTime, TrafficLevel> analyzeTrafficLevelOnRushHour() {
-        Map<LocalDateTime, Double> rushHourData = calculateAverageSpeedRushHour();
+    public Map<LocalDate, Map<RushHour, AnalyzedLevel>> analyzeTrafficLevelOnRushHour() {
+        Map<LocalDate, Map<RushHour, Double>> rushHourSpeeds = calculateAverageSpeedRushHour();
 
-        HashMap<LocalDateTime, TrafficLevel> analyzedData = new HashMap<>();
+        Map<LocalDate, Map<RushHour, AnalyzedLevel>> result = new HashMap<>();
 
-        for (LocalDateTime dateTime : rushHourData.keySet()) {
-            Double averageSpeed = rushHourData.get(dateTime);
-            if (averageSpeed > TrafficUtil.LOW_TRAFFIC)
-                analyzedData.put(dateTime, TrafficLevel.LOW_TRAFFIC);
-            else if (averageSpeed > TrafficUtil.HIGH_TRAFFIC)
-                analyzedData.put(dateTime, TrafficLevel.MODERATE_TRAFFIC);
-            else
-                analyzedData.put(dateTime, TrafficLevel.HIGH_TRAFFIC);
+        for (LocalDate date : rushHourSpeeds.keySet()) {
+            Map<RushHour, Double> rushHourSpeedMap = rushHourSpeeds.get(date);
+            Map<RushHour, AnalyzedLevel> dateTrafficLevelMap = new HashMap<>();
+
+            for (RushHour rushHour : rushHourSpeedMap.keySet()) {
+                Double averageSpeed = rushHourSpeedMap.get(rushHour);
+                TrafficLevel trafficLevel;
+
+                if (averageSpeed > TrafficUtil.LOW_TRAFFIC) {
+                    trafficLevel = TrafficLevel.LOW_TRAFFIC;
+                } else if (averageSpeed > TrafficUtil.HIGH_TRAFFIC) {
+                    trafficLevel = TrafficLevel.MODERATE_TRAFFIC;
+                } else {
+                    trafficLevel = TrafficLevel.HIGH_TRAFFIC;
+                }
+
+                AnalyzedLevel speedAndLevel = new AnalyzedLevel(averageSpeed, trafficLevel);
+                dateTrafficLevelMap.put(rushHour, speedAndLevel);
+            }
+            result.put(date, dateTrafficLevelMap);
         }
-        return analyzedData;
+
+        return result;
     }
+
+
 
     public Map<LocalDate, Map<TrafficZone, Efficiency>> calculateUrbanMobilityEfficiency() {
         Map<LocalDate, Map<TrafficZone, List<TrafficData>>> trafficDataByDateAndZone = getTrafficDataByDateAndZone();
@@ -161,9 +181,9 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
                     averageSpeed = totalSpeed / vehicleCount;
 
                 Efficiency efficiencyCategory = getEfficiencyCategory(averageSpeed);
-                dayEfficiency.put(trafficZone,efficiencyCategory);
+                dayEfficiency.put(trafficZone, efficiencyCategory);
             }
-            efficiencyMap.put(date,dayEfficiency);
+            efficiencyMap.put(date, dayEfficiency);
         }
 
         return efficiencyMap;
