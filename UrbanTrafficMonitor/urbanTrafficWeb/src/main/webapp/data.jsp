@@ -29,21 +29,21 @@
     %>
     <div class="row text-center mb-4">
         <div class="col">
-            <button class="btn btn-primary mr-2">Traffic Patterns</button>
+            <a class="btn btn-primary mr-2" href="traffic_pattern">Traffic Patterns</a>
             <button class="btn btn-primary">Urban Efficiency</button>
         </div>
     </div>
 
     <div class="row">
         <table class="table table-bordered table-hover">
-
             <thead>
             <tr>
                 <th>Date</th>
                 <th>Time</th>
+                <th>Vehicle Speed (km/h)</th>
                 <th>Traffic Light Status</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
+                <th>Latitude (°)</th>
+                <th>Longitude (°)</th>
                 <th>Traffic Zone</th>
             </tr>
             </thead>
@@ -56,6 +56,8 @@
                 </td>
                 <td><%= trafficData.getTimeStamp().toLocalTime() %>
                 </td>
+                <td><%= trafficData.getVehicleSpeed() %>
+                </td>
                 <td><%= trafficData.getLightStatus() %>
                 </td>
                 <td><%= trafficData.getLatitude() %>
@@ -65,12 +67,14 @@
                 <td><%= trafficData.getTrafficZone() %>
                 </td>
             </tr>
-            <% }
+            <%
+                }
             }%>
             </tbody>
         </table>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"/>
+<script src="js/script.js"/>
 </body>
 </html>
