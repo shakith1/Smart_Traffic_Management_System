@@ -36,8 +36,7 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
         return (double) totalSpeed / totalCount;
     }
 
-    @Override
-    public Map<LocalDate, List<TrafficData>> getTrafficDataByDate() {
+    private Map<LocalDate, List<TrafficData>> getTrafficDataByDate() {
         Map<LocalDate, List<TrafficData>> dataByDate = new HashMap<>();
 
         for (TrafficData trafficData : dataStorage.getTrafficDataList()) {
@@ -66,8 +65,7 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
         return dataByDateAndZone;
     }
 
-    @Override
-    public Map<LocalDate, Map<RushHour, List<TrafficData>>> filterTrafficDataByRushHour() {
+    private Map<LocalDate, Map<RushHour, List<TrafficData>>> filterTrafficDataByRushHour() {
         Map<LocalDate, List<TrafficData>> trafficDataByDate = getTrafficDataByDate();
         Map<LocalDate, Map<RushHour, List<TrafficData>>> rushHourTrafficData = new HashMap<>();
 
@@ -98,7 +96,7 @@ public class TrafficDataAnalysisBean implements TrafficDataAnalysis {
         return !time.isBefore(start) && !time.isAfter(end);
     }
 
-    public Map<LocalDate, Map<RushHour, Double>> calculateAverageSpeedRushHour() {
+    private Map<LocalDate, Map<RushHour, Double>> calculateAverageSpeedRushHour() {
         Map<LocalDate, Map<RushHour, List<TrafficData>>> rushHourData = filterTrafficDataByRushHour();
         Map<LocalDate, Map<RushHour, Double>> averageSpeeds = new HashMap<>();
 

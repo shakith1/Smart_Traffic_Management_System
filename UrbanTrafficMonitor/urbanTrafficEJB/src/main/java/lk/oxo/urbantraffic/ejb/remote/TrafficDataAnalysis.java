@@ -14,14 +14,6 @@ import java.util.Map;
 public interface TrafficDataAnalysis {
     double calculateAverageSpeed();
 
-    Map<LocalDate, List<TrafficData>> getTrafficDataByDate();
-
-//    Map<LocalDateTime, List<TrafficData>> filterTrafficDataByRushHour();
-Map<LocalDate, Map<RushHour, List<TrafficData>>> filterTrafficDataByRushHour();
-
-//    Map<LocalDateTime, Double> calculateAverageSpeedRushHour();
-Map<LocalDate, Map<RushHour, Double>> calculateAverageSpeedRushHour();
-
     Map<LocalDate, Map<RushHour, AnalyzedLevel>> analyzeTrafficLevelOnRushHour();
 
     Map<LocalDate, Map<TrafficZone, List<TrafficData>>> getTrafficDataByDateAndZone();
